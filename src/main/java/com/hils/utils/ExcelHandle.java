@@ -4,17 +4,20 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class ExcelHandle {
 
 
     private ExcelHandle() {
     }
-
-
 
 
     public static XSSFWorkbook getWorkBook(String path) throws IOException {
@@ -70,9 +73,10 @@ public class ExcelHandle {
 
     public static void writeToExcelAddNewCase(List<String> data, String path, String sheetName, int column) throws IOException {
 
-        if(data.size() != 0) {
+        if (data.size() != 0) {
 
-            XSSFWorkbook workbook = getWorkBook(path);;
+            XSSFWorkbook workbook = getWorkBook(path);
+            ;
             XSSFSheet sheet = workbook.getSheet(sheetName);
 
             XSSFCellStyle cellStyleInsert = sheet.getRow(2).getCell(8).getCellStyle();
@@ -84,8 +88,6 @@ public class ExcelHandle {
 //        cellStyleInsert.setFont(fontBlank);
 
             XSSFCellStyle cellStyleNewCaseAdd = sheet.getRow(4).getCell(8).getCellStyle();
-
-
 
             int lastRow = sheet.getLastRowNum() + 1;
 
@@ -104,7 +106,7 @@ public class ExcelHandle {
                     cell.setCellStyle(cellStyleBlank);
 
                     if (i == 0) {
-                        cell.setCellValue(lastRow-1);
+                        cell.setCellValue(lastRow - 1);
                         cell.setCellStyle(cellStyleNewCaseAdd);
                     } else if (i == column) {
                         cell.setCellValue(item);
@@ -124,11 +126,80 @@ public class ExcelHandle {
 //        openFile(path);
     }
 
+    public static void writeTagToExcel(Map<String, String> data, String path) throws IOException {
+        XSSFWorkbook workbook = getWorkBook(path);
+        XSSFSheet sheet;
+        if (Objects.isNull(workbook.getSheet("4.Tags"))) {
+            sheet = workbook.createSheet("4.Tags");
+        } else {
+            sheet = workbook.getSheet("4.Tags");
+        }
+
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("Scenario Name");
+        row.createCell(1).setCellValue("Tags");
+        int rowNum = 1;
+        do {
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                row = sheet.createRow(rowNum);
+                row.createCell(0).setCellValue(entry.getKey());
+                row.createCell(1).setCellValue(entry.getValue());
+                rowNum++;
+            }
+        } while (rowNum <= data.size());
+
+        FileOutputStream out = new FileOutputStream(path);
+        workbook.write(out);
+        out.close();
+    }
+
+    public static void writeTestCaseToExcel(Map<String, List<String>> data, String path) throws IOException {
+        XSSFWorkbook workbook = getWorkBook(path);
+        XSSFSheet sheet;
+        if (Objects.isNull(workbook.getSheet("5.Testcase"))) {
+            sheet = workbook.createSheet("5.Testcase");
+        } else {
+            sheet = workbook.getSheet("5.Testcase");
+        }
+
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("Scenario Name");
+        row.createCell(1).setCellValue("Procedures");
+        int rowNum = 1;
+
+        do {
+            for (Map.Entry<String, List<String>> entry : data.entrySet()) {
+                String key = entry.getKey();
+                List<String> lists = entry.getValue();
+                StringBuilder join = new StringBuilder();
+                for (int i = 0; i < lists.size(); i++) {
+                    join.append(i).append(". ").append(lists.get(i)).append("\r\n");
+                }
+                row = sheet.createRow(rowNum);
+                row.createCell(0).setCellValue(key);
+                row.createCell(1).setCellValue(join.toString());
+                rowNum++;
+            }
+        } while (rowNum <= data.size());
+
+
+        FileOutputStream out = new FileOutputStream(path);
+        workbook.write(out);
+        out.close();
+    }
+
 
     public static void writeToExcel(Map<String, List<String>> data, String path) throws IOException {
 
         XSSFWorkbook workbook = getWorkBook(path);
-        XSSFSheet sheet = workbook.createSheet("3.Scenario List");
+        XSSFSheet sheet = null;
+
+        if (Objects.isNull(workbook.getSheet("3.Scenario List"))) {
+            sheet = workbook.createSheet("3.Scenario List");
+        } else {
+            sheet = workbook.getSheet("3.Scenario List");
+        }
+
         CellStyle cellStyle = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
 
@@ -151,19 +222,27 @@ public class ExcelHandle {
 
             if (listSize != 0) {
                 if (listSize > 1) {
-                    for (int i = 1; i < listSize; i++) {
-                        if (i > 1) {
+                    for (int i = 0; i < listSize; i++) {
+                        if (i == 0) {
+                            row = sheet.createRow(rowNum++);
+                            cell = row.createCell(0);
+                            cell.setCellValue(key);
+                            row.createCell(1).setCellValue(i + 1);
+                            row.createCell(2).setCellValue(lists.get(i));
+                        } else if (i > 0) {
                             row = sheet.createRow(rowNum++);
                             cell = row.createCell(0);
                             cell.setCellValue(key);
                             cell.setCellStyle(cellStyle);
-                            row.createCell(1).setCellValue(i);
+                            row.createCell(1).setCellValue(i + 1);
                             row.createCell(2).setCellValue(lists.get(i));
-                        } else {
-                            row = sheet.createRow(rowNum++);
-                            row.createCell(0).setCellValue(key);
-                            row.createCell(1).setCellValue(i);
-                            row.createCell(2).setCellValue(lists.get(i));
+//                            System.out.println(lists.get(i));
+//                        } else {
+//                            row = sheet.createRow(rowNum++);
+//                            row.createCell(0).setCellValue(key);
+//                            row.createCell(1).setCellValue(i);
+//                            row.createCell(2).setCellValue(lists.get(i));
+////                            System.out.println(lists.get(i));
                         }
                     }
                 } else {
@@ -175,13 +254,10 @@ public class ExcelHandle {
             }
         }
 
-
-
         FileOutputStream out = new FileOutputStream(path);
         workbook.write(out);
         out.close();
 
-        openFile(path);
 
     }
 
