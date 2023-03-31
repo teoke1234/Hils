@@ -1,7 +1,10 @@
 package com.hils.utils;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.awt.*;
 import java.io.File;
@@ -41,6 +44,7 @@ public class ExcelHandle {
         return listOldTCS;
     }
 
+
     public static void writeToExcelDetectDeletedCase(List<String> data, String path, String sheetName, int column) throws IOException {
         XSSFWorkbook workbook = getWorkBook(path);
         XSSFSheet sheet = workbook.getSheet(sheetName);
@@ -68,6 +72,7 @@ public class ExcelHandle {
 
 //        openFile(path);
     }
+
 
     public static void writeToExcelAddNewCase(List<String> data, String path, String sheetName, int column) throws IOException {
 
@@ -132,19 +137,16 @@ public class ExcelHandle {
         } else {
             sheet = workbook.getSheet("4.Tags");
         }
-
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("Scenario Name");
         row.createCell(1).setCellValue("Tags");
         row.createCell(2).setCellValue("Procedures");
-
         int rowNum = 1;
         do {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 row = sheet.createRow(rowNum);
                 row.createCell(0).setCellValue(entry.getKey());
                 row.createCell(1).setCellValue(entry.getValue());
-
             }
             for (Map.Entry<String, List<String>> entry1 : dataTestCase.entrySet()) {
                 List<String> lists = entry1.getValue();
@@ -154,15 +156,13 @@ public class ExcelHandle {
 
                 }
                 sheet.getRow(rowNum).createCell(2).setCellValue(join.toString());
-                rowNum++;
-            }
+            }rowNum++;
         } while (rowNum <= data.size());
 
         FileOutputStream out = new FileOutputStream(path);
         workbook.write(out);
         out.close();
     }
-
     public static void writeToExcel(Map<String, List<String>> data, String path) throws IOException {
 
         XSSFWorkbook workbook = getWorkBook(path);
@@ -210,7 +210,6 @@ public class ExcelHandle {
                             cell.setCellStyle(cellStyle);
                             row.createCell(1).setCellValue(i + 1);
                             row.createCell(2).setCellValue(lists.get(i));
-
                         }
                     }
                 } else {
