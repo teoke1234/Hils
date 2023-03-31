@@ -142,26 +142,23 @@ public class ExcelHandle {
         row.createCell(1).setCellValue("Tags");
         row.createCell(2).setCellValue("Procedures");
         int rowNum = 1;
-        do {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 row = sheet.createRow(rowNum);
                 row.createCell(0).setCellValue(entry.getKey());
                 row.createCell(1).setCellValue(entry.getValue());
-            }
-            for (Map.Entry<String, List<String>> entry1 : dataTestCase.entrySet()) {
-                List<String> lists = entry1.getValue();
+                List<String> lists = dataTestCase.get(entry.getKey());
                 StringBuilder join = new StringBuilder();
                 for (int i = 0; i < lists.size(); i++) {
-                    join.append(i).append(". ").append(lists.get(i)).append("\r\n");
-
+                    join.append(i).append(". ").append(lists.get(i)).append("\n");
                 }
-                sheet.getRow(rowNum).createCell(2).setCellValue(join.toString());
-            }rowNum++;
-        } while (rowNum <= data.size());
+                row.createCell(2).setCellValue(join.toString());
+                rowNum++;
+            }
 
         FileOutputStream out = new FileOutputStream(path);
         workbook.write(out);
         out.close();
+        openFile(path);
     }
     public static void writeToExcel(Map<String, List<String>> data, String path) throws IOException {
 
