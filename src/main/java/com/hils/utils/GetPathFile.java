@@ -1,5 +1,7 @@
 package com.hils.utils;
 
+import com.hils.constants.FrameworkConstants;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,18 +15,24 @@ public class GetPathFile {
 
     private GetPathFile(){}
 
-    public static List<String> getPathFile(String path, String fileExtension) {
-        List<String> listPathFile = null;
-        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
-            listPathFile = walk.filter(p -> !Files.isDirectory(p)) // not a directory
-                    .map(p -> p.toString()) // convert path to string
-                    .filter(f -> f.endsWith(fileExtension))// check end with
-                    .collect(Collectors.toList()); // collect all matched to a List
-
+    public static List<String> getPathFile(String[] paths, String fileExtension) {
+        List<String> listPathFile = new ArrayList<>();
+        for (String path:paths) {
+            path = FrameworkConstants.PROJECTPATH+"\\"+path;
+            System.out.println(path);
+            try (Stream<Path> walk = Files.walk(Paths.get(path))) {
+                List<String> collect = walk.filter(p -> !Files.isDirectory(p)) // not a directory
+                        .map(p -> p.toString()) // convert path to string
+                        .filter(f -> f.endsWith(fileExtension))// check end with
+                        .collect(Collectors.toList()); // collect all matched to a List
+//                collect.forEach(System.out::println);
+                listPathFile = Stream.concat(listPathFile.stream(),collect.stream()).toList();
 //            System.out.println(listPathFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
         return listPathFile;
     }
 
@@ -69,6 +77,9 @@ public class GetPathFile {
             String tag;
             try (Stream<String> lines = Files.lines(Paths.get(path))) {
 
+//                lines.map(p -> p.replaceAll("\\s+", ""))
+//                        .filter(f -> f.contains("TagTag")).forEach(System.out::println);
+
                 tag = lines
                         .map(p -> p.replaceAll("\\s+", ""))
                         .filter(f -> f.endsWith("Group=\"Precondition\"/>"))
@@ -80,7 +91,7 @@ public class GetPathFile {
             }
             String scenarioName = path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".mxs"));
 
-            testSenarioAndTag.put(scenarioName, tag);
+//            testSenarioAndTag.put(scenarioName, tag);
 
             sortTestcases = testSenarioAndTag                                                  //Map<String, String>
                     .entrySet()                                                        //Set<Map.Entry<String, String>>

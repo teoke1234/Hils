@@ -149,7 +149,7 @@ public class ExcelHandle {
                 List<String> lists = dataTestCase.get(entry.getKey());
                 StringBuilder join = new StringBuilder();
                 for (int i = 0; i < lists.size(); i++) {
-                    join.append(i).append(". ").append(lists.get(i)).append("\n");
+                    join.append(i+1).append(". ").append(lists.get(i)).append("\n");
                 }
                 row.createCell(2).setCellValue(join.toString());
                 rowNum++;

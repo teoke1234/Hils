@@ -1,6 +1,7 @@
 package com.hils.tests;
 
 import com.hils.constants.FrameworkConstants;
+import com.hils.utils.CSVHandle;
 import com.hils.utils.ExcelHandle;
 import com.hils.utils.GetPathFile;
 
@@ -44,22 +45,19 @@ public class Run {
 //        ExcelHandle.writeToExcelAddNewCase(differences, FrameworkConstants.EXCELPATH, FrameworkConstants.SHEETNAME, FrameworkConstants.COLUMN);
 
         // get list scenario
-        List<String> listScenario = GetPathFile.getPathFile(FrameworkConstants.PROJECTPATH, "mxs");
-//        System.out.println(listScenario);
+        List<String> listScenario = GetPathFile.getPathFile(FrameworkConstants.folderTestCase, "mxs");
 
-//         get list scenario and tcs
+        //get list scenario and tcs
         Map<String, List<String>> listScenarioAndTcs = GetPathFile.readTcOfTestScenario(listScenario, "mxc");
-//        System.out.println(listScenarioAndTcs);
 
-
+        //get tag
         Map<String, String> scenarioAndTag = GetPathFile.readTagOfTestScenario(listScenario, "mxc");
-//
 
-//        write to Excel sheet
-        ExcelHandle.writeToExcel(listScenarioAndTcs,FrameworkConstants.EXCELPATH);
-        ExcelHandle.writeTagAndTestCaseToExcel(scenarioAndTag,FrameworkConstants.EXCELPATH,listScenarioAndTcs);
+        //write to Excel sheet
+//        ExcelHandle.writeToExcel(listScenarioAndTcs,FrameworkConstants.EXCELPATH);
+//        ExcelHandle.writeTagAndTestCaseToExcel(scenarioAndTag,FrameworkConstants.EXCELPATH,listScenarioAndTcs);
 
-//        File[] directories = new File("C:\\Users\\teoke\\Downloads\\AAA Debug").listFiles(File::isDirectory);
+        CSVHandle.writeCSV(scenarioAndTag,FrameworkConstants.csvPath,listScenarioAndTcs);
 
     }
 }
