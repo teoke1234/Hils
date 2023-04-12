@@ -46,13 +46,14 @@ public class Run {
 
         // get list scenario
         List<String> listScenario = GetPathFile.getPathFile(FrameworkConstants.folderTestCase, "mxs");
-
+//        System.out.println(listScenario);
         //get list scenario and tcs
         Map<String, List<String>> listScenarioAndTcs = GetPathFile.readTcOfTestScenario(listScenario, "mxc");
+//        System.out.println(listScenarioAndTcs);
 
         //get tag
         Map<String, String> scenarioAndTag = GetPathFile.readTagOfTestScenario(listScenario, "mxc");
-
+//        System.out.println(scenarioAndTag);
         //write to Excel sheet
 //        ExcelHandle.writeToExcel(listScenarioAndTcs,FrameworkConstants.EXCELPATH);
 //        ExcelHandle.writeTagAndTestCaseToExcel(scenarioAndTag,FrameworkConstants.EXCELPATH,listScenarioAndTcs);

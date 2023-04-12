@@ -77,9 +77,6 @@ public class GetPathFile {
             String tag;
             try (Stream<String> lines = Files.lines(Paths.get(path))) {
 
-//                lines.map(p -> p.replaceAll("\\s+", ""))
-//                        .filter(f -> f.contains("TagTag")).forEach(System.out::println);
-
                 tag = lines
                         .map(p -> p.replaceAll("\\s+", ""))
                         .filter(f -> f.endsWith("Group=\"Precondition\"/>"))
@@ -91,7 +88,7 @@ public class GetPathFile {
             }
             String scenarioName = path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".mxs"));
 
-//            testSenarioAndTag.put(scenarioName, tag);
+            testSenarioAndTag.put(scenarioName, tag);
 
             sortTestcases = testSenarioAndTag                                                  //Map<String, String>
                     .entrySet()                                                        //Set<Map.Entry<String, String>>
